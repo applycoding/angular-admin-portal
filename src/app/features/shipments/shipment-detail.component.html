@@ -1,0 +1,90 @@
+<section class="detail-page">
+  <a mat-button routerLink="/shipments">{{ 'shipment.back' | t }}</a>
+
+  @if (shipment(); as current) {
+    <header class="detail-head">
+      <div>
+        <p class="eyebrow">{{ current.trackingNumber }}</p>
+        <h2>{{ current.customer }}</h2>
+        <p>{{ current.origin }} → {{ current.destination }}</p>
+      </div>
+      <span class="status status-{{ current.status }}">{{ statusMessageKey(current.status) | t }}</span>
+    </header>
+
+    <dl class="facts panel">
+      <div>
+        <dt>{{ 'shipments.carrier' | t }}</dt>
+        <dd>{{ current.carrier }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'shipment.weight' | t }}</dt>
+        <dd>{{ current.weightKg }} {{ 'units.kg' | t }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'shipments.eta' | t }}</dt>
+        <dd>{{ current.eta }}</dd>
+      </div>
+      <div>
+        <dt>{{ 'shipment.booked' | t }}</dt>
+        <dd><time [attr.datetime]="current.createdAt">{{ current.createdAt | date: 'medium' : 'UTC' }}</time></dd>
+      </div>
+    </dl>
+
+    <h3>{{ 'shipment.timeline' | t }}</h3>
+    <ol class="timeline">
+      @for (event of current.events; track event.at + event.status + event.note) {
+        <li>
+          <p class="status status-{{ event.status }}">{{ statusMessageKey(event.status) | t }}</p>
+          <time [attr.datetime]="event.at">{{ event.at | date: 'medium' : 'UTC' }}</time>
+          <p>{{ event.location }}</p>
+          <p>{{ event.note }}</p>
+        </li>
+      }
+    </ol>
+
+    @if (canUpdate()) {
+      <form class="event-form panel" [formGroup]="eventForm" (ngSubmit)="submitEvent()">
+        <h3>{{ 'shipment.updateTitle' | t }}</h3>
+        @if (saveError(); as code) {
+          <p class="banner" role="alert">{{ apiErrorMessageKey(code) | t }}</p>
+        }
+        @if (saved()) {
+          <p class="saved" role="status">{{ 'shipment.saved' | t }}</p>
+        }
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'shipments.status' | t }}</mat-label>
+          <mat-select formControlName="status">
+            @for (status of statuses; track status) {
+              <mat-option [value]="status">{{ statusMessageKey(status) | t }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'shipment.location' | t }}</mat-label>
+          <input matInput formControlName="location" maxlength="80" />
+          @if (eventForm.controls.location.touched && eventForm.controls.location.invalid) {
+            <mat-error>{{ 'form.required' | t }}</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ 'shipment.note' | t }}</mat-label>
+          <textarea matInput rows="3" formControlName="note" maxlength="240"></textarea>
+          @if (eventForm.controls.note.touched && eventForm.controls.note.hasError('required')) {
+            <mat-error>{{ 'form.required' | t }}</mat-error>
+          } @else if (eventForm.controls.note.touched && eventForm.controls.note.hasError('maxlength')) {
+            <mat-error>{{ 'form.maxlength' | t }}</mat-error>
+          }
+        </mat-form-field>
+        <button type="submit" mat-flat-button color="primary" [disabled]="saving()">
+          {{ (saving() ? 'shipment.saving' : 'shipment.saveEvent') | t }}
+        </button>
+      </form>
+    }
+  } @else if (error(); as code) {
+    <div class="banner" role="alert">
+      <p>{{ apiErrorMessageKey(code) | t }}</p>
+    </div>
+  } @else {
+    <p>{{ 'shipments.loading' | t }}</p>
+  }
+</section>

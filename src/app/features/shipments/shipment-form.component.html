@@ -1,0 +1,94 @@
+<section class="shipment-form-page">
+  <p class="lead">{{ 'form.lead' | t }}</p>
+  @if (saveError(); as code) {
+    <p class="banner" role="alert">{{ apiErrorMessageKey(code) | t }}</p>
+  }
+  <form class="form-grid panel" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>{{ 'form.tracking' | t }}</mat-label>
+      <input matInput formControlName="trackingNumber" autocomplete="off" />
+      <mat-hint>{{ 'form.trackingHint' | t }}</mat-hint>
+      @if (form.controls.trackingNumber.touched && form.controls.trackingNumber.hasError('required')) {
+        <mat-error>{{ 'form.required' | t }}</mat-error>
+      } @else if (form.controls.trackingNumber.touched && form.controls.trackingNumber.hasError('pattern')) {
+        <mat-error>{{ 'form.pattern' | t }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>{{ 'form.customer' | t }}</mat-label>
+      <input matInput formControlName="customer" maxlength="80" />
+      @if (form.controls.customer.touched && form.controls.customer.hasError('required')) {
+        <mat-error>{{ 'form.required' | t }}</mat-error>
+      } @else if (form.controls.customer.touched && form.controls.customer.hasError('maxlength')) {
+        <mat-error>{{ 'form.maxlength' | t }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'form.origin' | t }}</mat-label>
+      <mat-select formControlName="origin">
+        @for (place of places; track place) {
+          <mat-option [value]="place">{{ place }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.origin.touched && form.controls.origin.hasError('required')) {
+        <mat-error>{{ 'form.required' | t }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'form.destination' | t }}</mat-label>
+      <mat-select formControlName="destination">
+        @for (place of places; track place) {
+          <mat-option [value]="place">{{ place }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.destination.touched && form.controls.destination.hasError('required')) {
+        <mat-error>{{ 'form.required' | t }}</mat-error>
+      } @else if (form.hasError('sameRoute') && (form.controls.origin.touched || form.controls.destination.touched)) {
+        <mat-error>{{ 'form.sameRoute' | t }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'form.carrier' | t }}</mat-label>
+      <mat-select formControlName="carrier">
+        @for (carrier of carriers; track carrier) {
+          <mat-option [value]="carrier">{{ carrier }}</mat-option>
+        }
+      </mat-select>
+      @if (form.controls.carrier.touched && form.controls.carrier.invalid) {
+        <mat-error>{{ 'form.required' | t }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>{{ 'form.weight' | t }}</mat-label>
+      <input matInput type="number" formControlName="weightKg" min="0.1" max="30000" step="0.1" />
+      @if (form.controls.weightKg.touched && form.controls.weightKg.hasError('required')) {
+        <mat-error>{{ 'form.required' | t }}</mat-error>
+      } @else if (form.controls.weightKg.touched && form.controls.weightKg.hasError('min')) {
+        <mat-error>{{ 'form.min' | t }}</mat-error>
+      } @else if (form.controls.weightKg.touched && form.controls.weightKg.hasError('max')) {
+        <mat-error>{{ 'form.max' | t }}</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="span-2">
+      <mat-label>{{ 'form.eta' | t }}</mat-label>
+      <input matInput type="date" formControlName="eta" />
+      @if (form.controls.eta.touched && form.controls.eta.hasError('required')) {
+        <mat-error>{{ 'form.required' | t }}</mat-error>
+      } @else if (form.controls.eta.touched && form.controls.eta.hasError('pattern')) {
+        <mat-error>{{ 'form.date' | t }}</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="span-2">
+      <button type="submit" mat-flat-button color="primary" [disabled]="saving()">
+        {{ (saving() ? 'form.saving' : 'form.submit') | t }}
+      </button>
+    </div>
+  </form>
+</section>

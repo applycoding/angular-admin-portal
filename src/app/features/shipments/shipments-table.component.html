@@ -1,0 +1,90 @@
+<section class="shipments-page" [attr.aria-busy]="loading()">
+  <div class="filters">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'shipments.search' | t }}</mat-label>
+      <input matInput type="search" autocomplete="off" (input)="onSearch($event)" />
+    </mat-form-field>
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>{{ 'shipments.status' | t }}</mat-label>
+      <mat-select [value]="query().status" (selectionChange)="onStatus($event.value)">
+        <mat-option value="">{{ 'status.all' | t }}</mat-option>
+        @for (status of statuses; track status) {
+          <mat-option [value]="status">{{ statusMessageKey(status) | t }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  @if (loading()) {
+    <mat-progress-bar mode="indeterminate" [attr.aria-label]="'shipments.loading' | t" />
+  }
+
+  @if (error(); as code) {
+    <div class="banner" role="alert">
+      <p>{{ apiErrorMessageKey(code) | t }}</p>
+      <button type="button" mat-stroked-button (click)="retry()">{{ 'shipments.retry' | t }}</button>
+    </div>
+  }
+
+  <div class="table-scroll panel">
+    <table
+      mat-table
+      class="hl-table"
+      [dataSource]="rows()"
+      matSort
+      matSortDisableClear
+      [matSortActive]="query().sort"
+      [matSortDirection]="query().order"
+      (matSortChange)="onSort($event)"
+    >
+      <caption>{{ 'shipments.caption' | t }}</caption>
+
+      <ng-container matColumnDef="trackingNumber">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">{{ 'shipments.tracking' | t }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.trackingNumber }}</td>
+      </ng-container>
+      <ng-container matColumnDef="customer">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">{{ 'shipments.customer' | t }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.customer }}</td>
+      </ng-container>
+      <ng-container matColumnDef="origin">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">{{ 'shipments.origin' | t }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.origin }}</td>
+      </ng-container>
+      <ng-container matColumnDef="destination">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">{{ 'shipments.destination' | t }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.destination }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">{{ 'shipments.status' | t }}</th>
+        <td mat-cell *matCellDef="let row">
+          <span class="status status-{{ row.status }}">{{ statusMessageKey(row.status) | t }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="eta">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header scope="col">{{ 'shipments.eta' | t }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.eta }}</td>
+      </ng-container>
+      <ng-container matColumnDef="view">
+        <th mat-header-cell *matHeaderCellDef scope="col">{{ 'shipments.view' | t }}</th>
+        <td mat-cell *matCellDef="let row">
+          <a mat-button [routerLink]="['/shipments', row.id]">{{ 'shipments.view' | t }}</a>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columns"></tr>
+      <tr mat-row *matRowDef="let row; columns: columns"></tr>
+    </table>
+    @if (!loading() && rows().length === 0) {
+      <p class="empty">{{ 'shipments.empty' | t }}</p>
+    }
+  </div>
+
+  <mat-paginator
+    [length]="total()"
+    [pageIndex]="query().page"
+    [pageSize]="query().pageSize"
+    [pageSizeOptions]="pageSizeOptions"
+    (page)="onPage($event)"
+  />
+</section>

@@ -1,0 +1,49 @@
+{
+  "name": "angular-admin-portal",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Portfolio demo: Harborline logistics admin portal built with Angular, Material, and NgRx.",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --host 0.0.0.0 --port 4317",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "jest --ci --runInBand",
+    "lint": "ng lint"
+  },
+  "engines": {
+    "node": "^20.19.0 || ^22.12.0 || >=24.0.0"
+  },
+  "dependencies": {
+    "@angular/animations": "^21.2.0",
+    "@angular/cdk": "^21.2.0",
+    "@angular/common": "^21.2.0",
+    "@angular/compiler": "^21.2.0",
+    "@angular/core": "^21.2.0",
+    "@angular/forms": "^21.2.0",
+    "@angular/material": "^21.2.0",
+    "@angular/platform-browser": "^21.2.0",
+    "@angular/router": "^21.2.0",
+    "@ngrx/effects": "^21.1.1",
+    "@ngrx/entity": "^21.1.1",
+    "@ngrx/store": "^21.1.1",
+    "angular-in-memory-web-api": "^0.21.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^21.2.27",
+    "@angular/cli": "^21.2.27",
+    "@angular/compiler-cli": "^21.2.0",
+    "@types/jest": "^30.0.0",
+    "angular-eslint": "^21.4.0",
+    "eslint": "^9.36.0",
+    "globals": "^15.15.0",
+    "jest": "^30.2.0",
+    "jest-environment-jsdom": "^30.2.0",
+    "jest-preset-angular": "^17.0.3",
+    "prettier": "^3.8.1",
+    "typescript": "~5.9.2",
+    "typescript-eslint": "^8.46.0"
+  }
+}

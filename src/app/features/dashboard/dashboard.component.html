@@ -1,0 +1,40 @@
+<section class="dashboard-page">
+  <h2>{{ 'dashboard.greeting' | t: { name: userName()?.name ?? '' } }}</h2>
+  <p class="lead">{{ 'dashboard.intro' | t }}</p>
+
+  @if (summaryState().kind === 'loading') {
+    <p>{{ 'dashboard.loading' | t }}</p>
+  } @else if (summaryState().kind === 'error') {
+    <div class="banner" role="alert">
+      <p>{{ 'dashboard.error' | t }}</p>
+      <button type="button" mat-stroked-button (click)="retry()">{{ 'dashboard.retry' | t }}</button>
+    </div>
+  } @else if (summaryState().summary; as summary) {
+    @if (summary.total === 0) {
+      <p class="empty">{{ 'dashboard.empty' | t }}</p>
+    } @else {
+      <h3>{{ 'dashboard.sampleCounts' | t }}</h3>
+      <div class="stats">
+        <article class="stat">
+          <p class="stat-label">{{ 'dashboard.total' | t }}</p>
+          <p class="stat-value">{{ summary.total }}</p>
+        </article>
+        @for (status of statuses; track status) {
+          <article class="stat">
+            <p class="stat-label">{{ statusMessageKey(status) | t }}</p>
+            <p class="stat-value">{{ summary.byStatus[status] }}</p>
+          </article>
+        }
+      </div>
+    }
+  }
+
+  <p>
+    <a mat-stroked-button routerLink="/shipments">{{ 'dashboard.openShipments' | t }}</a>
+  </p>
+
+  <section class="placeholder">
+    <h3>{{ 'dashboard.placeholderTitle' | t }}</h3>
+    <p>{{ 'dashboard.placeholderBody' | t }}</p>
+  </section>
+</section>

@@ -1,0 +1,48 @@
+<a class="skip-link" href="#main">{{ 'nav.skip' | t }}</a>
+<mat-sidenav-container class="shell">
+  <mat-sidenav
+    class="shell-nav"
+    [mode]="handset() ? 'over' : 'side'"
+    [opened]="navOpen()"
+    (openedChange)="navOpen.set($event)"
+  >
+    <a class="brand" routerLink="/dashboard">
+      <span class="brand-mark">{{ 'shell.brandMark' | t }}</span>
+      <span class="brand-name">{{ 'app.name' | t }}</span>
+    </a>
+    <nav [attr.aria-label]="'nav.main' | t">
+      <ul class="nav-list">
+        @for (item of items(); track item.path) {
+          <li>
+            <a [routerLink]="item.path" routerLinkActive="active" ariaCurrentWhenActive="page">
+              <mat-icon aria-hidden="true">{{ item.icon }}</mat-icon>
+              <span>{{ item.labelKey | t }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </nav>
+  </mat-sidenav>
+  <mat-sidenav-content class="shell-content">
+    <header class="topbar">
+      <button type="button" class="menu-button" (click)="toggleNav()">
+        <mat-icon aria-hidden="true">menu</mat-icon>
+        <span class="visually-hidden">{{ 'nav.menu' | t }}</span>
+      </button>
+      <h1>{{ titleKey() | t }}</h1>
+      <span class="spacer"></span>
+      <mat-form-field class="locale-field" appearance="outline" subscriptSizing="dynamic">
+        <mat-label>{{ 'locale.label' | t }}</mat-label>
+        <mat-select [value]="i18n.locale()" (selectionChange)="setLocale($event.value)">
+          <mat-option value="en">{{ 'locale.en' | t }}</mat-option>
+          <mat-option value="es">{{ 'locale.es' | t }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <p class="who">{{ user()?.name }} · {{ roleLabel() | t }}</p>
+      <button type="button" mat-stroked-button (click)="logout()">{{ 'auth.signOut' | t }}</button>
+    </header>
+    <main id="main" class="page">
+      <router-outlet />
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>
