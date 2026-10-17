@@ -1,5 +1,7 @@
 # Harborline
 
+**Live demo:** https://applycoding.github.io/angular-admin-portal/ (runs fully in the browser against the in-memory mock API; demo accounts are listed on the sign-in page)
+
 Harborline is an Angular admin portal for a fictional logistics company. Dispatchers and admins review shipments, open a status timeline, and book a new movement. Viewers can read the same records. The UI is in English and Spanish, and every visible label comes from a message catalog.
 
 Authentication is a route guard plus an HTTP interceptor. The token is an unsigned demo JWT. Shipments live in an NgRx store (entity adapter, effects, and a feature state) and are loaded with server-style paging, sorting, and filtering. A lazy route owns that store. The backend is `angular-in-memory-web-api`, seeded with 18 fictional shipments. There is no real API, database, or credential store.

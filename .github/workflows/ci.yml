@@ -20,3 +20,35 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
+
+  pages-build:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build demo for GitHub Pages
+        run: npx ng build --base-href /angular-admin-portal/
+      - name: SPA fallback for deep links
+        run: cp dist/portal/browser/index.html dist/portal/browser/404.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/portal/browser
+
+  pages-deploy:
+    needs: pages-build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
